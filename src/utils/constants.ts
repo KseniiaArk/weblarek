@@ -14,7 +14,9 @@ export const categoryMap = {
   'кнопка': 'card__category_button',
   'дополнительное': 'card__category_additional',
   'другое': 'card__category_other',
-};
+} as const;
+
+export type ProductCategory = keyof typeof categoryMap;
 
 export const settings = {
 

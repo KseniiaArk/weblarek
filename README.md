@@ -98,3 +98,115 @@ Presenter - презентер содержит основную логику п
 `emit<T extends object>(event: string, data?: T): void` - инициализация события. При вызове события в метод передается название события и объект с данными, который будет использован как аргумент для вызова обработчика.  
 `trigger<T extends object>(event: string, context?: Partial<T>): (data: T) => void` - возвращает функцию, при вызове которой инициализируется требуемое в параметрах событие с передачей в него данных из второго параметра.
 
+### Данные
+
+В коде используются следующие интерфейсы и типы для описания данных:
+
+#### Товар (IProduct) описывает структуру товара в каталоге магазина
+
+interface IProduct {
+    id: string;
+    description: string;
+    image: string;
+    title: string;
+    price: number | null;
+    category: ProductCategory;
+}
+
+#### Покупатель (IBuyer) описывает данные покупателя, необходимые для оформления заказа
+
+interface IBuyer {
+    payment: TPayment;
+    email: string;
+    phone: string;
+    address: string;
+}
+
+#### Ответы API
+
+interface IItemListResponse {
+    total: number;
+    items: IProduct[];
+}
+
+interface IOrderResponse {
+    id: string;
+    total: number;
+}
+
+type IOrderRequest = IBuyer & {
+    items: string[];
+    total: number;
+}
+
+### Модели данных
+
+#### Класс Product - каталог товаров.
+
+Отвечает за хранение и управление каталогом товаров. Хранит список товаров, а также выбранный товар для детального просмотра.
+
+Конструктор `constructor()` не принимает параметров, инициализирует пустой массив товаров и null для выбранного.
+
+Поля класса:
+
+`private _items: IProduct[]` - массив всех товаров в каталоге;
+`private _selectedItem: IProduct | null` - товар, выбранный для подробного отображения.
+
+`setItems(items: IProduct[]): void` - сохраняет массив товаров в модели
+`getItems(): IProduct[]` - получает массив товаров из модели
+`getItem(id: string): IProduct | null` - получает товар по его ID
+`setSelectedItem(item: IProduct | null): void` - сохраняет товар для подробного отображения
+`getSelectedItem(): IProduct | null` - получает товар для подробного отображения
+
+#### Класс Basket - корзина
+
+Управляет выбранными покупателем товарами. Реализует добавление, удаление и расчет общей стоимости товаров в корзине.
+
+Конструктор `constructor()` инициализирует пустой массив товаров в корзине.
+
+Поля класса:
+
+`private _items: IProduct[]` - массив товаров в корзине.
+
+Методы класса:
+
+`getBasketItems(): IProduct[]` - получает товары из корзины
+`addItem(item: IProduct | null): void` - добавляет товар в корзину, если он еще не в ней
+`removeItem(item?: IProduct | null): void` - удаляет выбранный товар из корзины
+`clearItems(): void` - очищает корзину
+`getTotalPrice(): number` - рассчитывает полную стоимость корзины
+`getItemsAmount(): number` - рассчитывает количество товаров в корзине
+`inBasket(id: string): boolean` - проверяет наличие товара в корзине по ID
+
+#### Класс Customer - покупатель
+
+Хранит и управляет данными покупателя. Реализует валидация введенных данных.
+
+Конструктор `constructor()` инициализирует все поля пустыми значениями.
+
+Поля класса:
+
+`private _payment: TPayment` - способ оплаты
+`private _email: string` - email
+`private _phone: string` - номер телефона
+`private _address: string` - адрес доставки
+
+Методы класса:
+
+`setCustomerInfo(data: Partial<IBuyer>): void` - сохраняет данные, обновляя отдельные поля не удаляя их
+`getCustomerInfo(): IBuyer` - получает сохраненные данные
+`clearCustomerInfo(): void` - очищает данные пользователя
+`validationCustomerInfo(): Record<string, string>` - проверяет валидность, введенных полей покупателя
+
+### Слой коммуникации
+
+#### Класс ApiService - сервис API
+
+Отвечает за обмен данными с сервером. Получает информацию о товарах и отправляет данные о новых заказах.
+
+Конструктор `constructor(private api: IApi)` принимает параметр `api`. Объект `api` реализует интерфейс `IApi`.
+
+Методы класса:
+
+`getItemsList(): Promise<IItemListResponse>` - получает каталог товаров с сервера
+`postOrder(evt: IOrderRequest): Promise<IOrderResponse>` - отправляет заказ на сервер для обработки
