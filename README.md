@@ -149,14 +149,14 @@ type IOrderRequest = IBuyer & {
 
 Поля класса:
 
-`private _items: IProduct[]` - массив всех товаров в каталоге;
+`private _items: IProduct[]` - массив всех товаров в каталоге.
 `private _selectedItem: IProduct | null` - товар, выбранный для подробного отображения.
 
-`setItems(items: IProduct[]): void` - сохраняет массив товаров в модели
-`getItems(): IProduct[]` - получает массив товаров из модели
-`getItem(id: string): IProduct | null` - получает товар по его ID
-`setSelectedItem(item: IProduct | null): void` - сохраняет товар для подробного отображения
-`getSelectedItem(): IProduct | null` - получает товар для подробного отображения
+`setItems(items: IProduct[]): void` - сохраняет массив товаров в модели.
+`getItems(): IProduct[]` - получает массив товаров из модели.
+`getItem(id: string): IProduct | null` - получает товар по его ID.
+`setSelectedItem(item: IProduct | null): void` - сохраняет товар для подробного отображения.
+`getSelectedItem(): IProduct | null` - получает товар для подробного отображения.
 
 #### Класс Basket - корзина
 
@@ -170,13 +170,13 @@ type IOrderRequest = IBuyer & {
 
 Методы класса:
 
-`getBasketItems(): IProduct[]` - получает товары из корзины
-`addItem(item: IProduct | null): void` - добавляет товар в корзину, если он еще не в ней
-`removeItem(item?: IProduct | null): void` - удаляет выбранный товар из корзины
-`clearItems(): void` - очищает корзину
-`getTotalPrice(): number` - рассчитывает полную стоимость корзины
-`getItemsAmount(): number` - рассчитывает количество товаров в корзине
-`inBasket(id: string): boolean` - проверяет наличие товара в корзине по ID
+`getBasketItems(): IProduct[]` - получает товары из корзины.
+`addItem(item: IProduct | null): void` - добавляет товар в корзину, если он еще не в ней.
+`removeItem(item?: IProduct | null): void` - удаляет выбранный товар из корзины.
+`clearItems(): void` - очищает корзину.
+`getTotalPrice(): number` - рассчитывает полную стоимость корзины.
+`getItemsAmount(): number` - рассчитывает количество товаров в корзине.
+`inBasket(id: string): boolean` - проверяет наличие товара в корзине по ID.
 
 #### Класс Customer - покупатель
 
@@ -186,17 +186,17 @@ type IOrderRequest = IBuyer & {
 
 Поля класса:
 
-`private _payment: TPayment` - способ оплаты
-`private _email: string` - email
-`private _phone: string` - номер телефона
-`private _address: string` - адрес доставки
+`private _payment: TPayment` - способ оплаты.
+`private _email: string` - email.
+`private _phone: string` - номер телефона.
+`private _address: string` - адрес доставки.
 
 Методы класса:
 
-`setCustomerInfo(data: Partial<IBuyer>): void` - сохраняет данные, обновляя отдельные поля не удаляя их
-`getCustomerInfo(): IBuyer` - получает сохраненные данные
-`clearCustomerInfo(): void` - очищает данные пользователя
-`validationCustomerInfo(): Record<string, string>` - проверяет валидность, введенных полей покупателя
+`setCustomerInfo(data: Partial<IBuyer>): void` - сохраняет данные, обновляя отдельные поля, не удаляя их.
+`getCustomerInfo(): IBuyer` - получает сохраненные данные.
+`clearCustomerInfo(): void` - очищает данные пользователя.
+`validationCustomerInfo(): Record<string, string>` - проверяет валидность, введенных полей покупателя.
 
 ### Слой коммуникации
 
@@ -208,5 +208,5 @@ type IOrderRequest = IBuyer & {
 
 Методы класса:
 
-`getItemsList(): Promise<IItemListResponse>` - получает каталог товаров с сервера
-`postOrder(evt: IOrderRequest): Promise<IOrderResponse>` - отправляет заказ на сервер для обработки
+`getItemsList(): Promise<IItemListResponse>` - получает каталог товаров с сервера.
+`postOrder(evt: IOrderRequest): Promise<IOrderResponse>` - отправляет заказ на сервер для обработки.
