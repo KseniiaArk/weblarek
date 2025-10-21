@@ -39,3 +39,23 @@ export type IOrderRequest = IBuyer & {
     items: string[];
     total: number;
 }
+
+export interface ISuccession {
+    onClose?: () => void;
+}
+
+export interface IBuy {
+    onBuy?: () => void;
+}
+
+export interface ICatalogClick {
+    onClick?: (evt: MouseEvent) => void;
+}
+
+export interface IDeleteFromBasket {
+    onDelete?: (evt: MouseEvent) => void;
+}
+
+export interface IFormSubmit {
+    onSubmit?: (evt: Event) => void;
+}
