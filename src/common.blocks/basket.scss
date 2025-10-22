@@ -10,6 +10,10 @@
     padding: 0;
     margin: 0;
     flex-grow: 1;
+    list-style: none;
+    overflow-y: auto;
+    max-height: 410px;
+    scrollbar-color: $primary #f0f0f0;
   }
 
   &__item {

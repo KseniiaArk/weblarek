@@ -31,7 +31,7 @@ export class Customer {
             changed = true;
         }
 
-        if (changed) this.evt.emit('buyer:changed')
+        if (changed) this.validate();
     }
 
    getCustomerInfo(): IBuyer {
@@ -44,6 +44,7 @@ export class Customer {
         this._email = '';
         this._phone = '';
         this._address = '';
+        this.validate();
     }
 
     private static readonly ERROR_MESSAGES = {
@@ -52,6 +53,21 @@ export class Customer {
         phone: 'Введите номер телефона',
         address: 'Необходим адрес доставки'
     } as const;
+
+    setField<K extends keyof IBuyer>(field: K, value: IBuyer[K]): void {
+        const fieldHandlers = {
+            payment: () => this._payment = value as TPayment,
+            email: () => this._email = value as string,
+            phone: () => this._phone = value as string,
+            address: () => this._address = value as string
+        };
+
+        const handler = fieldHandlers[field];
+        if (handler) {
+            handler();
+            this.validate();
+        }
+    }
 
     validationCustomerInfo(): Record<string, string> {
         const errors: Record<string, string> = {};
@@ -68,7 +84,7 @@ export class Customer {
         const errors: Record<string, string> = {};
 
         if (!this._payment) errors.payment = Customer.ERROR_MESSAGES.payment;
-        if (!this._address) errors.address = Customer.ERROR_MESSAGES.address;
+        if (!this._address.trim()) errors.address = Customer.ERROR_MESSAGES.address;
 
         return errors;
     }
@@ -76,24 +92,30 @@ export class Customer {
     validationContactsInfo(): Record<string, string> {
         const errors: Record<string, string> = {};
 
-        if (!this._email) errors.email = Customer.ERROR_MESSAGES.email;
-        if (!this._phone) errors.phone = Customer.ERROR_MESSAGES.phone;
+        if (!this._email.trim()) errors.email = Customer.ERROR_MESSAGES.email;
+        if (!this._phone.trim()) errors.phone = Customer.ERROR_MESSAGES.phone;
 
         return errors;
     }
 
-    setField<K extends keyof IBuyer>(field: K, value: IBuyer[K]): void {
-        const fieldHandlers = {
-            payment: () => this._payment = value as TPayment,
-            email: () => this._email = value as string,
-            phone: () => this._phone = value as string,
-            address: () => this._address = value as string
-        };
+    
 
-        const handler = fieldHandlers[field];
-        if (handler) {
-            handler();
-            this.evt.emit('buyer:changed');
+    private validate(): void {
+        const errors: Record<string, string> = {};
+
+        const hasOrderData = this._payment !== '' || this._address !== '';
+        const hasContactData = this._email !== '' || this._phone !== '';
+
+        if (hasOrderData) {
+            const orderErrors = this.validationOrderInfo();
+            Object.assign(errors, orderErrors);
         }
+
+        if (hasContactData) {
+            const contactErrors = this.validationContactsInfo();
+            Object.assign(errors, contactErrors);
+        }
+
+        this.evt.emit('form:validate', errors);
     }
 }

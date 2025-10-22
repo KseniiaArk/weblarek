@@ -12,6 +12,7 @@ export class ModalView extends Component<IModalData> {
     private pageWrapper: HTMLElement;
     private closeButton: HTMLButtonElement;
     private modalContent: HTMLElement;
+    private boundHandleKeydown: (evt:KeyboardEvent) => void;
 
     constructor(container: HTMLElement, private evt: IEvents) {
         super(container);
@@ -20,9 +21,10 @@ export class ModalView extends Component<IModalData> {
         this.closeButton = ensureElement('.modal__close', container) as HTMLButtonElement;
         this.modalContent = ensureElement('.modal__content', container);
 
+        this.boundHandleKeydown = this.handleKeydown.bind(this);
         this.closeButton.addEventListener('click', this.close.bind(this));
         this.container.addEventListener('click', this.handleOverlayClick.bind(this));
-        document.addEventListener('keydown', this.handleKeydown.bind(this));
+        //document.addEventListener('keydown', this.handleKeydown.bind(this));
     }
 
     private handleOverlayClick(evt: Event): void {
@@ -48,9 +50,17 @@ export class ModalView extends Component<IModalData> {
     }
 
     private toggleModal(open: boolean): void {
+        if (this.isOpen === open) return;
+
         this.isOpen = open;
         this.pageWrapper.classList.toggle('page__wrapper_locked', open);
         this.container.classList.toggle('modal_active', open);
+
+        if (open) {
+            document.addEventListener('keydown', this.boundHandleKeydown);
+        } else {
+            document.removeEventListener('keydown', this.boundHandleKeydown);
+        }
     }
 
     isModalOpen(): boolean {

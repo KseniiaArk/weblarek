@@ -35,7 +35,7 @@ export interface IOrderResponse {
     total: number;
 }
 
-export type IOrderRequest = IBuyer & {
+export interface IOrderRequest extends IBuyer {
     items: string[];
     total: number;
 }

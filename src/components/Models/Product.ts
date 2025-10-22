@@ -1,7 +1,7 @@
 import { IProduct } from "../../types";
 import { IEvents } from "../base/Events";
 
-export class Product {
+export class Products {
     private _items: IProduct[] = [];
     private _selectedItem: IProduct | null = null;
 
@@ -25,6 +25,8 @@ export class Product {
 
     setSelectedItem(item: IProduct | null): void {
         this._selectedItem = item;
+
+        if (item) this.evt.emit('product:selected', item);
     }
 
     getSelectedItem(): IProduct | null {
