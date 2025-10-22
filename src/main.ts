@@ -90,6 +90,7 @@ const getButtonConfiguration = (item: IProduct, isInBasket: boolean) => {
 
 let activeForm: 'order' | 'contacts' | null = null;
 
+
 events.on('product:selected', (item: IProduct) => {
     const isInBasket = basketModel.inBasket(item.id);
     const buttonConfig = getButtonConfiguration(item, isInBasket);
@@ -141,7 +142,6 @@ function renderBasket(): void {
 }
 
 events.on('basket:open', () => {
-    renderBasket();
     modal.setContent(basketView.render());
     modal.open();
 })
@@ -158,8 +158,12 @@ events.on('basket:changed', () => {
 events.on('basket:order', () => {
     activeForm = 'order';
     const customerInfo = customerModel.getCustomerInfo();
-    orderForm.payment = customerInfo.payment || 'card';
-    orderForm.address = customerInfo.address || '';
+    orderForm.payment = customerInfo.payment;
+    orderForm.address = customerInfo.address;
+
+    const errors = customerModel.validationOrderInfo();
+    orderForm.setValidationError(errors);
+    orderForm.valid = Object.keys(errors).length === 0;
 
     modal.setContent(orderForm.render());
     modal.open();
@@ -176,7 +180,7 @@ events.on('form:validate', (errors: Record<string, string>) => {
             address: errors.address || ''
         };
         orderForm.setValidationError(orderErrors);
-        orderForm.valid = !orderErrors.payment && !orderErrors.address;
+        orderForm.valid = Object.keys(errors).length === 0;
         
     } else if (activeForm === 'contacts') {
         const contactErrors = {
@@ -184,22 +188,21 @@ events.on('form:validate', (errors: Record<string, string>) => {
             phone: errors.phone || ''
         };
         contactForm.setValidationError(contactErrors);
-        contactForm.valid = !contactErrors.email && !contactErrors.phone;
+        contactForm.valid = Object.keys(errors).length === 0;
     }
 })
 
 events.on('order:submit', () => {
-    const errors = customerModel.validationOrderInfo();
+    activeForm = 'contacts';
+    const currentInfo = customerModel.getCustomerInfo();
+    contactForm.email = currentInfo.email;
+    contactForm.phone = currentInfo.phone;
+    
+    const contactErrors = customerModel.validationContactsInfo();
+    contactForm.setValidationError(contactErrors);
+    contactForm.valid = Object.keys(contactErrors).length === 0;
 
-    if (Object.keys(errors).length === 0) {
-        activeForm = 'contacts';
-        const currentInfo = customerModel.getCustomerInfo();
-        contactForm.email = currentInfo.email || '';
-        contactForm.phone = currentInfo.phone || '';
-        modal.setContent(contactForm.render());
-    } else {
-        orderForm.setValidationError(errors);
-    }
+    modal.setContent(contactForm.render());
 });
 
 events.on('modal:close', () => { 
@@ -216,6 +219,7 @@ events.on('contacts:submit', () => {
             total: basketModel.getTotalPrice(),
             items: basketModel.getBasketItems().map(item => item.id),
         };
+
 
          apiService.postOrder(orderData)
             .then(res => {
@@ -247,4 +251,3 @@ events.on('catalog:changed', () => {
 apiService.getItemsList()
     .then(response => cardCatalog.setItems(response.items))
     .catch(error => console.log('Ошибка загрузки с сервера', error));
-

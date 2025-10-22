@@ -2,7 +2,7 @@ import { IBuyer, TPayment } from "../../types";
 import { IEvents } from "../base/Events";
 
 export class Customer {
-    private _payment: TPayment = 'card';
+    private _payment: TPayment = '';
     private _email: string = '';
     private _phone: string = '';
     private _address: string = '';
