@@ -90,12 +90,7 @@ const getButtonConfiguration = (item: IProduct, isInBasket: boolean) => {
 
 let activeForm: 'order' | 'contacts' | null = null;
 
-/**events.on('card:click', (item: IProduct) => {
-    cardCatalog.setSelectedItem(item);
-})**/
-
 events.on('product:selected', (item: IProduct) => {
-    //cardCatalog.setSelectedItem(item);
     const isInBasket = basketModel.inBasket(item.id);
     const buttonConfig = getButtonConfiguration(item, isInBasket);
 
@@ -168,34 +163,6 @@ events.on('basket:order', () => {
 
     modal.setContent(orderForm.render());
     modal.open();
-
-    /**currentFormOrder = new OrderForm(orderTemplate, {
-        onSubmit: (event: Event) => {
-            event.preventDefault();
-            const orderData = currentFormOrder!.itemsOrderData;
-            const errors = customerModel.validationOrderInfo();
-
-            if (Object.keys(errors).length === 0) {
-                customerModel.setCustomerInfo(orderData);
-                events.emit('order:submit', orderData);
-                console.log('Данные доставки сохранены:', orderData);
-            } else {
-                currentFormOrder!.setValidationError(errors);
-            }
-        },
-        onPaymentChange: (payment: TPayment) => {
-            customerModel.setField('payment', payment);
-        },
-        onAddressChange: (address: string) => {
-            customerModel.setField('address', address);
-        },
-    });
-
-    currentFormOrder.payment = customerInfo.payment || 'card';
-    currentFormOrder.address = customerInfo.address;
-
-    modal.setContent(currentFormOrder.render());
-    modal.open();**/
 });
 
 events.on('buyer:change', (data: {field: keyof IBuyer; value: string}) => {
@@ -240,7 +207,6 @@ events.on('modal:close', () => {
 });
 
 events.on('contacts:submit', () => {
-    //const customerInfo = customerModel.getCustomerInfo();
     const errors = customerModel.validationContactsInfo();
 
     if (Object.keys(errors).length === 0) {

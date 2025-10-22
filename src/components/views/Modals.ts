@@ -24,7 +24,6 @@ export class ModalView extends Component<IModalData> {
         this.boundHandleKeydown = this.handleKeydown.bind(this);
         this.closeButton.addEventListener('click', this.close.bind(this));
         this.container.addEventListener('click', this.handleOverlayClick.bind(this));
-        //document.addEventListener('keydown', this.handleKeydown.bind(this));
     }
 
     private handleOverlayClick(evt: Event): void {
